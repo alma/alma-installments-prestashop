@@ -1,4 +1,5 @@
 alma/vendor
+alma/node_modules
 alma/config*.xml
 alma/composer.lock
 alma/phpunit.xml
@@ -17,3 +18,6 @@ tools/composer.lock
 .task/
 .php-cs-fixer.cache
 .php_cs.cache
+.github/copilot-instructions.md
+.github/instructions
+.github/skills

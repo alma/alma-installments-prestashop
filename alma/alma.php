@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018-2024 Alma SAS.
+ * 2018-2026 Alma SAS.
  *
  * THE MIT LICENSE
  *
@@ -18,21 +18,32 @@
  * IN THE SOFTWARE.
  *
  * @author    Alma SAS <contact@getalma.eu>
- * @copyright 2018-2024 Alma SAS
+ * @copyright 2018-2026 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
+
+use PrestaShop\Module\Alma\Application\Service\AssetService;
+use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
+use PrestaShop\Module\Alma\Application\Service\ModuleService;
+use PrestaShop\Module\Alma\Application\Service\PaymentOptionsService;
+use PrestaShop\Module\Alma\Application\Service\WidgetFrontendService;
+use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
+use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
+use PrestaShop\PsAccountsInstaller\Installer\Installer;
+use PrestaShopBundle\Translation\TranslatorInterface;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 // Autoload here for the module definition
-require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
+$autoloadPath = __DIR__ . '/vendor/autoload.php';
+if (file_exists($autoloadPath)) {
+    require_once $autoloadPath;
+}
 
-class Alma extends PaymentModule
+class Alma extends PaymentModule implements WidgetInterface
 {
-    const VERSION = '4.11.0';
-    const PS_ACCOUNTS_VERSION_REQUIRED = '5.3.0';
-
     public $_path;
     public $local_path;
 
@@ -41,11 +52,6 @@ class Alma extends PaymentModule
 
     /** @var string[] */
     public $limited_currencies;
-
-    /**
-     * @var Alma\PrestaShop\Helpers\HookHelper
-     */
-    public $hook;
 
     /**
      * @var true
@@ -62,169 +68,49 @@ class Alma extends PaymentModule
      */
     public $confirmUninstall;
 
-    /**
-     * @var \PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer
-     */
-    protected $container;
-
     public function __construct()
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '4.11.0';
+        $this->version = '5.0.0';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
-        $controllers = ['payment', 'validation', 'ipn'];
 
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $controllers[] = 'insurance';
-            $controllers[] = 'subscription';
-            $controllers[] = 'cancellation';
-        }
-
-        $this->controllers = $controllers;
+        $this->controllers = ['payment', 'validation', 'ipn'];
         $this->is_eu_compatible = 1;
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
         $this->module_key = 'ad25114b1fb02d9d8b8787b992a0ccdb';
         $this->limited_currencies = ['EUR'];
 
-        $version = _PS_VERSION_;
-        // Need to anticipate Fix bug #PSCFV-10990 Prestashop : https://github.com/PrestaShop/PrestaShop/commit/c69688cc1107e053aa2297fdcb40c70c08fa135f
-        if (version_compare(_PS_VERSION_, '1.5.6.1', '<')) {
-            $version = substr_replace($version, substr($version, -1) + 1, -1);
-        }
-
-        $this->ps_versions_compliancy = ['min' => '1.5.3.1', 'max' => $version];
+        $this->ps_versions_compliancy = ['min' => '1.7.8.0', 'max' => _PS_VERSION_];
 
         parent::__construct();
 
-        $this->displayName = $this->l('1x 2x 3x 4x, D+15 or D+30 Alma - Payment in instalments and deferred', 'alma');
-        $this->description = $this->l('Offer an easy and safe installments payments option to your customers', 'alma');
-        $this->confirmUninstall = $this->l('Are you sure you want to deactivate Alma payments from your shop?', 'alma');
+        $this->displayName = $this->trans('1x 2x 3x 4x, D+15 or D+30 Alma - Payment in instalments and deferred');
+        $this->description = $this->trans('Offer an easy and safe installments payments option to your customers');
+        $this->confirmUninstall = $this->trans('Are you sure you want to deactivate Alma payments from your shop?');
 
         $this->file = __FILE__;
-
-        if (version_compare(_PS_VERSION_, '1.5.0.1', '<')) {
-            $this->local_path = _PS_MODULE_DIR_ . $this->name . '/';
-        }
     }
 
     /**
-     * @return array[]
+     * Translate the given string.
+     * @param string $id
+     * @param array $parameters
+     * @param string|null $domain
+     * @param string|null $locale
+     * @return string
      */
-    public function dataTabs()
+    public function translate(string $id, array $parameters = [], string $domain = null, string $locale = null): string
     {
-        return [
-            'alma' => [
-                'name' => 'Alma',
-                'parent' => null,
-                'position' => null,
-                'icon' => null,
-            ],
-            'AdminAlmaConfig' => [
-                'name' => $this->l('Configure'),
-                'parent' => 'alma',
-                'position' => 1,
-                'icon' => 'tune',
-            ],
-            'AdminAlmaCategories' => [
-                'name' => $this->l('Excluded categories'),
-                'parent' => 'alma',
-                'position' => 2,
-                'icon' => 'not_interested',
-            ],
-            'AdminAlmaRefunds' => [
-                'name' => false,
-                'parent' => 'alma',
-                'position' => null,
-                'icon' => null,
-            ],
-            'AdminAlmaShareOfCheckout' => [
-                'name' => false,
-                'parent' => 'alma',
-                'position' => null,
-                'icon' => null,
-            ],
-        ];
+        return $this->trans($id, $parameters, $domain, $locale);
     }
 
     /**
-     * Check parent install result then add log errors if any.
-     *
-     * @param $coreInstall
-     *
-     * @return bool as result of parent::install() method
-     */
-    private function checkCoreInstall($coreInstall)
-    {
-        if (!$coreInstall) {
-            $logger = \Alma\PrestaShop\Factories\LoggerFactory::loggerClass();
-            $logger::addLog("Alma: Core module install failed (returned {$coreInstall})", 3);
-
-            if (count($this->_errors) > 0) {
-                $errors = implode(', ', $this->_errors);
-                $logger::addLog("Alma: module install errors: {$errors})", 3);
-            }
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Check if PS Account is compatible.
-     *
-     * @return void
-     *
-     * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException
-     */
-    private function checkPsAccountsPresence()
-    {
-        $configurationProxy = new \Alma\PrestaShop\Proxy\ConfigurationProxy();
-        $toolsHelper = new \Alma\PrestaShop\Helpers\ToolsHelper();
-        if ($configurationProxy->isDevMode()) {
-            throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Debug mode is activated');
-        }
-
-        if (
-            !class_exists(\Symfony\Component\Config\ConfigCache::class)
-            || !class_exists(\PrestaShop\ModuleLibServiceContainer\DependencyInjection\ServiceContainer::class)
-        ) {
-            throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Classes don\'t exist for PS Account');
-        }
-        if (
-            $toolsHelper->psVersionCompare('1.6', '<')
-        ) {
-            throw new \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException('[Alma] Prestashop version lower than 1.6');
-        }
-    }
-
-    /**
-     * Check if PS Account is installed and up to date, minimal version required 5.0.
-     *
-     * @return void
-     *
-     * @throws \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException
-     * @throws \Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException
-     */
-    private function checkPsAccountsCompatibility()
-    {
-        $this->checkPsAccountsPresence();
-        $psAccountsModule = \Module::getInstanceByName('ps_accounts');
-        if (!$psAccountsModule) {
-            throw new \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException('[Alma] PS Account is not installed');
-        }
-
-        if ($psAccountsModule->version < self::PS_ACCOUNTS_VERSION_REQUIRED) {
-            throw new \PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException('[Alma] PS Account is not up to date, minimal version required ' . self::PS_ACCOUNTS_VERSION_REQUIRED);
-        }
-    }
-
-    /**
-     * Insert module into datable.
+     * Executed during the installation module.
+     * return always need begin with parent::install()
      *
      * @override
      *
@@ -232,471 +118,159 @@ class Alma extends PaymentModule
      *
      * @throws \PrestaShopException
      */
-    public function install()
+    public function install(): bool
     {
-        $tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
-        $almaBusinessDataRepository = new \Alma\PrestaShop\Repositories\AlmaBusinessDataRepository();
+        $languageRepository = new LanguageRepository();
+        $psAccountsInstaller = new Installer('5.3');
+        /** @var TranslatorInterface $translator */
+        $translator = $this->get('translator');
+        $moduleService = new ModuleService(
+            $this,
+            $languageRepository
+        );
+        $installerService = new ModuleInstallerService(
+            $moduleService,
+            Db::getInstance(),
+            $psAccountsInstaller,
+            $translator
+        );
 
-        try {
-            $this->checkPsAccountsPresence();
-            $psAccountsService = new \Alma\PrestaShop\Services\PsAccountsService($this, $this->context);
-            $psAccountsService->install();
-        } catch (\Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException $e) {
-            \Alma\PrestaShop\Factories\LoggerFactory::instance()->info($e->getMessage());
+        // TODO : Check multi-shop functionnalities (https://devdocs.prestashop-project.org/1.7/development/multistore/)
+        if (Shop::isFeatureActive()) {
+            Shop::setContext(Shop::CONTEXT_ALL);
         }
 
-        $coreInstall = parent::install();
-
-        if (!$this->checkCoreInstall($coreInstall)
-            || !$this->checkDependencies()
-            || !$this->registerHooks()) {
-            return false;
-        }
-
-        Tools::clearCache();
-
-        // Enable Alma payment for all installed carriers in PrestaShop 1.7+
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $this->updateCarriersWithAlma();
-        }
-
-        $almaBusinessDataRepository->createTable();
-
-        return $tabsHelper->installTabs($this->dataTabs());
+        return parent::install() && $installerService->install();
     }
 
     /**
      * @return bool
-     *
-     * @throws PrestaShopException
      */
-    public function uninstall()
+    public function uninstall(): bool
     {
-        $result = parent::uninstall() && \Alma\PrestaShop\Helpers\SettingsHelper::deleteAllValues();
-
-        $paymentModuleConf = [
-            'CONF_ALMA_FIXED',
-            'CONF_ALMA_VAR',
-            'CONF_ALMA_FIXED_FOREIGN',
-            'CONF_ALMA_VAR_FOREIGN',
-        ];
-
-        foreach ($paymentModuleConf as $configKey) {
-            if (Configuration::hasKey($configKey)) {
-                $result = $result && Configuration::deleteByName($configKey);
-            }
-        }
-
-        $tabsHelper = new \Alma\PrestaShop\Helpers\Admin\TabsHelper();
-
-        return $result && $tabsHelper->uninstallTabs($this->dataTabs());
+        return parent::uninstall();
     }
 
     /**
-     * Try to register mandatory hooks.
-     *
+     * Redirect to the configuration page when clicking on the "Configure" button of the module in the back office
+     * Because the configuration page use a legacy controller thanks to tab, we need to redirect to it instead of using the getContent function to display the configuration page
+     * @return void
+     */
+    public function getContent(): void
+    {
+        Tools::redirectAdmin($this->context->link->getAdminLink('AdminAlmaSettings'));
+    }
+
+    /**
+     * Load assets on the front office
+     * @return void
+     */
+    public function hookActionFrontControllerSetMedia(): bool
+    {
+        $assetService = new AssetService(
+            $this,
+            $this->context
+        );
+        return $assetService->checkAndLoadAssets();
+    }
+
+    /**
+     * Enables the new translation system for Prestashop 1.7.6 and later.
      * @return bool
      */
-    public function registerHooks()
+    public function isUsingNewTranslationSystem(): bool
     {
-        $hook = new \Alma\PrestaShop\Helpers\HookHelper();
-        $hooks = $hook->almaRegisterHooks();
-
-        foreach ($hooks as $hook) {
-            $this->registerHook($hook);
-        }
-
         return true;
     }
 
     /**
-     * @return void
+     * Display widget in the cart page
+     *
+     * @param array $params
+     * @return string
      */
-    private function updateCarriersWithAlma()
+    public function hookDisplayShoppingCartFooter(array $params): string
     {
-        $id_module = $this->id;
-        $id_shop = (int) $this->context->shop->id;
-        $id_lang = $this->context->language->id;
-        $carriers = Carrier::getCarriers($id_lang, false, false, false, null, Carrier::ALL_CARRIERS);
-        $values = null;
-        foreach ($carriers as $carrier) {
-            $values .= "({$id_module},{$id_shop},{$carrier['id_reference']}),";
-        }
-        $values = rtrim($values, ',');
-        Db::getInstance()->execute(
-            'DELETE FROM `' . _DB_PREFIX_ . 'module_carrier` WHERE `id_module` = ' . $id_module
-        );
-        Db::getInstance()->execute(
-            'INSERT INTO `' . _DB_PREFIX_ . 'module_carrier` (`id_module`, `id_shop`, `id_reference`) VALUES ' . $values
-        );
+        return $this->renderWidget(WidgetFrontendService::WIDGET_HOOK_SHOPPING_CART_FOOTER, $params);
     }
 
     /**
-     * @return void
+     * Display widget in the product page
+     *
+     * @param array $params
+     * @return string
      */
-    protected function requireAlmaAutoload()
+    public function hookDisplayProductPriceBlock(array $params): string
     {
-        // And the autoload here to make our Composer classes available everywhere!
-        require_once _PS_MODULE_DIR_ . 'alma/lib/smarty.php';
-        require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
-    }
-
-    /**
-     * @return void
-     */
-    public function hookActionAdminControllerInitBefore()
-    {
-        $this->requireAlmaAutoload();
-    }
-
-    /**
-     * @return void
-     */
-    public function hookModuleRoutes()
-    {
-        $this->requireAlmaAutoload();
-    }
-
-    /**
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookDisplayProductPriceBlock($params)
-    {
-        return $this->runHookController('displayProductPriceBlock', $params);
-    }
-
-    /**
-     * displayProductButtons is registered on PrestaShop 1.5 only, as displayProductPriceBlock wasn't available then.
-     *
-     * @param $params
-     *
-     * @return mixed|void|null
-     */
-    public function hookDisplayProductButtons($params)
-    {
-        if (version_compare(_PS_VERSION_, '1.6', '<')) {
-            return $this->runHookController('displayProductPriceBlock', $params);
-        }
-    }
-
-    /**
-     * Hook to modify the order table before Ps 1.7.5
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionAdminOrdersListingFieldsModifier($params)
-    {
-        return $this->runHookController('actionAdminOrdersListingFieldsModifier', $params);
-    }
-
-    /**
-     * Hook to modify the order table after Ps 1.7.5
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionOrderGridQueryBuilderModifier($params)
-    {
-        return $this->runHookController('actionOrderGridQueryBuilderModifier', $params);
-    }
-
-    /**
-     * Hook to modify the order table after Ps 1.7.5
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionOrderGridDefinitionModifier($params)
-    {
-        return $this->runHookController('actionOrderGridDefinitionModifier', $params);
-    }
-
-    /**
-     * Hook action after add cart
-     * Used for Event Alma Business Data
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionCartSave($params)
-    {
-        return $this->runHookController('actionCartSave', $params);
-    }
-
-    /**
-     * Hook action after validate order
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionValidateOrder($params)
-    {
-        return $this->runHookController('actionValidateOrder', $params);
-    }
-
-    /**
-     * Check php lib dependencies and versions.
-     *
-     * @return bool
-     */
-    private function checkDependencies()
-    {
-        $result = true;
-        if (!function_exists('curl_init')) {
-            $result = false;
-            $this->_errors[] = $this->l('Alma requires the CURL PHP extension.', 'alma');
+        if (($params['type'] ?? '') !== 'after_price') {
+            return '';
         }
 
-        if (!function_exists('json_decode')) {
-            $result = false;
-            $this->_errors[] = $this->l('Alma requires the JSON PHP extension.', 'alma');
-        }
-
-        $opensslException = $this->l('Alma requires OpenSSL >= 1.0.1', 'alma');
-        if (!defined('OPENSSL_VERSION_TEXT')) {
-            $result = false;
-            $this->_errors[] = $opensslException;
-        }
-
-        preg_match('/^(?:Libre|Open)SSL ([\d.]+)/', OPENSSL_VERSION_TEXT, $matches);
-        if (empty($matches[1])) {
-            $result = false;
-            $this->_errors[] = $opensslException;
-        }
-
-        if (!version_compare($matches[1], '1.0.1', '>=')) {
-            $result = false;
-            $this->_errors[] = $opensslException;
-        }
-
-        return $result;
+        return $this->renderWidget(WidgetFrontendService::WIDGET_HOOK_PRODUCT_PRICE_BLOCK, $params);
     }
 
     /**
-     * @param $hookName
-     * @param $params
+     * Display widget with WidgetInterface
      *
-     * @return mixed|null
+     * @param string $hookName
+     * @param array $configuration
+     * @return string
      */
-    private function runHookController($hookName, $params)
+    public function renderWidget($hookName, array $configuration): string
     {
-        $hookName = Tools::ucfirst(preg_replace('/[^a-zA-Z0-9]/', '', $hookName));
-
-        require_once dirname(__FILE__) . "/controllers/hook/{$hookName}HookController.php";
-        $controllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookController";
-
-        // check if override exist for hook controllers
-        if (file_exists(dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/{$hookName}HookController.php")) {
-            require_once dirname(__FILE__) . "/../../override/modules/alma/controllers/hook/{$hookName}HookController.php";
-            $controllerName = "Alma\PrestaShop\Controllers\Hook\\{$hookName}HookControllerOverride";
-        }
-
-        $controller = new $controllerName($this);
-
-        if ($controller->canRun()) {
-            return $controller->run($params);
-        }
-
-        return null;
-    }
-
-    /**
-     * @return void
-     */
-    public function viewAccess()
-    {
-        // Simply redirect to the default module's configuration page
-        $location = \Alma\PrestaShop\Helpers\LinkHelper::getAdminLinkAlmaDashboard();
-
-        Tools::redirectAdmin($location);
-    }
-
-    /**
-     * @return mixed|null
-     */
-    public function getContent()
-    {
-        $suggestPSAccounts = false;
-        $isPsAccountsCompatible = true;
-
+        /* @var WidgetFrontendService $widgetFrontendService */
         try {
-            $this->checkPsAccountsCompatibility();
-        } catch (\Alma\PrestaShop\Exceptions\CompatibilityPsAccountsException $e) {
-            $isPsAccountsCompatible = false;
-        } catch (\PrestaShop\PsAccountsInstaller\Installer\Exception\ModuleNotInstalledException $e) {
-            $suggestPSAccounts = true;
-        }
-
-        return $this->runHookController('getContent', ['isPsAccountsCompatible' => $isPsAccountsCompatible, 'suggestPSAccounts' => $suggestPSAccounts]);
-    }
-
-    /**
-     * To handle hook Header for some Prestashop versions
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookDisplayHeader($params)
-    {
-        return $this->hookHeader($params);
-    }
-
-    /**
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookHeader($params)
-    {
-        return $this->runHookController('frontHeader', $params);
-    }
-
-    /**
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookDisplayBackOfficeHeader($params)
-    {
-        return $this->runHookController('displayBackOfficeHeader', $params);
-    }
-
-    /**
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookPaymentOptions($params)
-    {
-        return $this->runHookController('paymentOptions', $params);
-    }
-
-    /**
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookDisplayPaymentEU($params)
-    {
-        $params['for_eu_compliance_module'] = true;
-
-        return $this->runHookController('paymentOptions', $params);
-    }
-
-    /**
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookDisplayPayment($params)
-    {
-        return $this->runHookController('displayPayment', $params);
-    }
-
-    /**
-     * Deprecated for version 1.7
-     *
-     * @param $params
-     *
-     * @return false|mixed|string|null
-     */
-    public function hookDisplayPaymentReturn($params)
-    {
-        try {
-            return $this->runHookController('displayPaymentReturn', $params);
-        } catch (\Alma\PrestaShop\Exceptions\RenderPaymentException $e) {
-            $module = Module::getInstanceByName('alma');
-            $this->context->smarty->assign([
-                'payment' => null,
-            ]);
-
-            return $module->display($module->file, 'displayPaymentReturn.tpl');
-        }
-    }
-
-    /**
-     * @param $params
-     *
-     * @return mixed|string|null
-     */
-    // New name of displayPaymentReturn hook for 1.7
-    public function hookPaymentReturn($params)
-    {
-        try {
-            return $this->runHookController('displayPaymentReturn', $params);
-        } catch (\Alma\PrestaShop\Exceptions\RenderPaymentException $e) {
+            $widgetFrontendService = $this->get('alma.widget_frontend_service');
+            return $widgetFrontendService->renderWidget($hookName);
+        } catch (Exception $e) {
+            //TODO : Add log here with $e->getMessage()
             return '';
         }
     }
 
     /**
-     * @param $params
+     * We return an empty array because we don't use this function to pass variables to the widget,
+     * we use the WidgetFrontendService::getWidgetVariables function instead to move intelligence
      *
-     * @return mixed|null
+     * @param string $hookName
+     * @param array $configuration
+     * @return array
      */
-    public function hookDisplayShoppingCartFooter($params)
+    public function getWidgetVariables($hookName, array $configuration): array
     {
-        return $this->runHookController('displayShoppingCartFooter', $params);
+        return [];
     }
 
     /**
-     * @param $params
+     * Display payment options in the checkout page
      *
-     * @return mixed|null
+     * @param array $params
+     * @return array
      */
-    public function hookDisplayAdminOrder($params)
+    public function hookPaymentOptions(array $params): array
     {
-        return $this->runHookController('displayRefunds', $params);
+        /* @var PaymentOptionsService $paymentOptionsService */
+        try {
+            $paymentOptionsService = $this->get('alma.payment_options_service');
+            $paymentOptionsService->setCart($params['cart'] ?? $this->context->cart);
+            return $paymentOptionsService->buildPaymentOptions();
+        } catch (Exception $e) {
+            // TODO : Remove var_dump when eligibility checkout done
+            var_dump($e->getMessage());
+            //TODO : Add log here
+        }
+
+        return [];
     }
 
     /**
-     * @param $params
+     * Display information in the order confirmation page
      *
-     * @return mixed|null
+     * @param array $params
+     * @return string
      */
-    public function hookDisplayAdminOrderMain($params)
+    public function hookDisplayPaymentReturn(array $params): string
     {
-        return $this->runHookController('displayRefunds', $params);
-    }
-
-    /**
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionOrderStatusPostUpdate($params)
-    {
-        return $this->runHookController('state', $params);
-    }
-
-    /**
-     * Hook action DisplayAdminAfterHeader.
-     */
-    public function hookDisplayAdminAfterHeader($params)
-    {
-        return $this->runHookController('displayAdminAfterHeader', $params);
-    }
-
-    /**
-     * @param $params
-     *
-     * @return void
-     */
-    public function hookActionObjectUpdateAfter($params)
-    {
-        $orderFactory = new Alma\PrestaShop\Factories\OrderFactory();
-        $clientHelper = new Alma\PrestaShop\Helpers\ClientHelper();
-        $carrierFactory = new Alma\PrestaShop\Factories\CarrierFactory();
-        $actionObjectUpdateAfter = new Alma\PrestaShop\Controllers\Hook\ActionObjectUpdateAfter($orderFactory, $clientHelper, $carrierFactory);
-        $actionObjectUpdateAfter->run($params);
+        return '';
     }
 }

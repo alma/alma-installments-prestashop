@@ -1,17 +1,14 @@
-ARG PHP_IMG_TAG=8.3-alpine
+ARG PHP_IMG_TAG=7.4-alpine
 FROM php:${PHP_IMG_TAG} AS production
-
-WORKDIR /composer
-
-RUN apk add --no-cache php-tokenizer
-RUN apk add --no-cache composer
-RUN composer self-update
-RUN composer init -n --name="alma/php-cs" --description="php-cs" --type="library"
-
-# PHP CS Fixer
-RUN composer require friendsofphp/php-cs-fixer --no-interaction
 
 WORKDIR /app
 
-ENTRYPOINT ["/composer/vendor/bin/php-cs-fixer"]
+RUN apk add --no-cache bash curl git libxml2-dev \
+    && docker-php-ext-install simplexml tokenizer xmlwriter
+
+RUN curl -L https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.34.0/php-cs-fixer.phar \
+    -o /usr/local/bin/php-cs-fixer \
+ && chmod +x /usr/local/bin/php-cs-fixer
+
+ENTRYPOINT ["php-cs-fixer"]
 CMD ["--version"]

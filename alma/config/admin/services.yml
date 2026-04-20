@@ -1,14 +1,374 @@
 services:
-  #####################
-  # PS Account
-  alma.ps_accounts_installer:
+  _defaults:
     public: true
+
+  #####################
+  # PrestaShop Account
+  alma.ps_accounts_installer:
     class: 'PrestaShop\PsAccountsInstaller\Installer\Installer'
     arguments:
-      - '5.0'
+      - '5.3'
 
   alma.ps_accounts_facade:
-    public: true
     class: 'PrestaShop\PsAccountsInstaller\Installer\Facade\PsAccounts'
     arguments:
       - '@alma.ps_accounts_installer'
+
+  ##############
+  # Alma
+
+  # Controllers
+
+
+  # Services
+  alma.module:
+    class: Alma
+    factory: [ 'Module', 'getInstanceByName' ]
+    arguments:
+      - 'alma'
+
+  alma.context:
+    class: Context
+    factory: [ 'Context', 'getContext' ]
+
+  alma.db:
+    class: Db
+    factory: [ 'Db', 'getInstance' ]
+
+  alma.helper_form:
+    class: HelperForm
+
+  alma.php_encryption:
+    class: PhpEncryption
+    arguments:
+      - !php/const _NEW_COOKIE_KEY_
+
+  alma.form_builder:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\FormBuilder'
+    arguments:
+      - '@alma.input_form_builder'
+
+  alma.input_form_builder:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\InputFormBuilder'
+
+  alma.api_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\ApiAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
+  alma.debug_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\DebugAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
+  alma.product_widget_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\ProductWidgetAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
+  alma.cart_widget_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\CartWidgetAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
+  alma.payment_button_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\PaymentButtonAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
+  alma.fee_plans_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\FeePlansAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
+  alma.excluded_categories_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\ExcludedCategoriesAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
+  alma.refund_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\RefundAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
+  alma.in_page_admin_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\InPageAdminForm'
+    arguments:
+      - '@alma.form_builder'
+
+  alma.language_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository'
+
+  alma.settings_collection_form:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsCollectionForm'
+
+  alma.ps_accounts_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\PsAccountsService'
+    arguments:
+      - '@alma.ps_accounts_facade'
+      - '@alma.ps_accounts_installer'
+      - !php/const _PS_MODE_DEV_
+
+  alma.module_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\ModuleService'
+    arguments:
+      - '@alma.module'
+      - '@alma.language_repository'
+
+  alma.module_installer_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\ModuleInstallerService'
+    arguments:
+      - '@alma.module_service'
+      - '@alma.db'
+      - '@alma.ps_accounts_installer'
+      - '@translator'
+
+  alma.settings_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\SettingsRepository'
+    arguments:
+      - '@alma.configuration_repository'
+      - '@alma.tools_proxy'
+      - '@alma.encryptor_helper'
+
+  alma.configuration_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository'
+
+  alma.order_state_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\OrderStateRepository'
+    arguments:
+      - '@alma.context'
+
+  alma.excluded_categories_repository:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Repository\ExcludedCategoriesRepository'
+    arguments:
+      - '@alma.configuration_repository'
+
+  alma.tools_proxy:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Proxy\ToolsProxy'
+
+  alma.product_proxy:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Proxy\ProductProxy'
+
+  alma.settings_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\SettingsService'
+    arguments:
+      - '@alma.authentication_service'
+      - '@alma.fee_plans_service'
+      - '@alma.widget_service'
+      - '@alma.payment_button_service'
+      - '@alma.excluded_categories_service'
+      - '@alma.refund_service'
+      - '@alma.in_page_service'
+      - '@alma.authentication_settings_provider'
+      - '@alma.fee_plans_provider'
+      - '@alma.settings_repository'
+      - '@alma.configuration_repository'
+      - '@alma.tools_proxy'
+      - '@translator'
+
+  alma.fee_plans_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\FeePlansService'
+    arguments:
+      - '@alma.context'
+      - '@alma.fee_plans_provider'
+      - '@alma.fee_plan_presenter'
+      - '@alma.configuration_repository'
+      - '@translator'
+
+  alma.widget_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\WidgetService'
+    arguments:
+      - '@alma.context'
+      - '@alma.configuration_repository'
+      - '@translator'
+
+  alma.widget_frontend_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\WidgetFrontendService'
+    arguments:
+      - '@alma.context'
+      - '@alma.configuration_repository'
+
+  alma.payment_button_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\PaymentButtonService'
+    arguments:
+      - '@alma.context'
+      - '@alma.configuration_repository'
+      - '@alma.language_repository'
+      - '@translator'
+
+  alma.excluded_categories_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService'
+    arguments:
+      - '@alma.module'
+      - '@alma.context'
+      - '@alma.excluded_categories_repository'
+      - '@alma.configuration_repository'
+      - '@alma.language_repository'
+      - '@alma.product_proxy'
+
+  alma.in_page_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\InPageService'
+    arguments:
+      - '@alma.configuration_repository'
+
+  alma.refund_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\RefundService'
+    arguments:
+      - '@alma.context'
+      - '@alma.configuration_repository'
+      - '@alma.order_state_repository'
+      - '@translator'
+
+  alma.settings_form_builder:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Form\SettingsFormBuilder'
+    arguments:
+      - '@alma.module'
+      - '@alma.helper_form'
+      - '@alma.settings_service'
+
+  alma.encryptor_helper:
+    class: 'PrestaShop\Module\Alma\Application\Helper\EncryptorHelper'
+    arguments:
+      - '@alma.php_encryption'
+
+  alma.authentication_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\AuthenticationService'
+    arguments:
+      - '@alma.authentication_settings_provider'
+      - '@alma.curl_client_factory'
+
+  alma.form_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\FormService'
+    arguments:
+      - '@alma.fee_plans_service'
+      - '@alma.widget_service'
+      - '@alma.payment_button_service'
+      - '@alma.excluded_categories_service'
+      - '@alma.refund_service'
+      - '@alma.api_admin_form'
+      - '@alma.fee_plans_admin_form'
+      - '@alma.product_widget_admin_form'
+      - '@alma.cart_widget_admin_form'
+      - '@alma.payment_button_admin_form'
+      - '@alma.excluded_categories_admin_form'
+      - '@alma.refund_admin_form'
+      - '@alma.in_page_admin_form'
+      - '@alma.debug_admin_form'
+      - '@alma.configuration_repository'
+
+  alma.asset_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\AssetService'
+    arguments:
+      - '@alma.module'
+      - '@alma.context'
+
+  alma.client_configuration:
+    class: 'Alma\Client\Application\ClientConfiguration'
+    factory: ['@alma.client_configuration_factory', 'create']
+
+  alma.client_configuration_factory:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Factory\ClientConfigurationFactory'
+    arguments:
+      - '@alma.authentication_settings_provider'
+      - '@alma.environment'
+
+  alma.curl_client:
+    class: 'Alma\Client\Application\CurlClient'
+    arguments:
+      - '@alma.client_configuration'
+
+  alma.merchant_endpoint:
+    class: 'Alma\Client\Application\Endpoint\MerchantEndpoint'
+    arguments:
+      - '@alma.curl_client'
+
+  alma.environment_factory:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Factory\EnvironmentFactory'
+    arguments:
+      - '@alma.authentication_settings_provider'
+
+  alma.curl_client_factory:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Factory\CurlClientFactory'
+
+  alma.authentication_settings_provider:
+    class: 'PrestaShop\Module\Alma\Application\Provider\AuthenticationSettingsProvider'
+    arguments:
+      - '@alma.module'
+      - '@alma.settings_repository'
+      - '@alma.language_repository'
+      - '@alma.tools_proxy'
+
+  alma.fee_plans_provider:
+    class: 'PrestaShop\Module\Alma\Application\Provider\FeePlansProvider'
+    arguments:
+      - '@alma.merchant_endpoint'
+      - '@alma.configuration_repository'
+
+  alma.environment:
+    class: 'Alma\Client\Domain\ValueObject\Environment'
+    factory: ['@alma.environment_factory', 'create']
+
+  alma.fee_plan_presenter:
+    class: 'PrestaShop\Module\Alma\Application\Presenter\FeePlanPresenter'
+    arguments:
+      - '@translator'
+
+  alma.category_grid_factory:
+    class: 'PrestaShop\PrestaShop\Core\Grid\GridFactory'
+    arguments:
+      - '@alma.category_grid_definition_factory'
+      - '@alma.category_grid_data_factory'
+      - '@prestashop.core.grid.filter.form_factory'
+      - '@prestashop.core.hook.dispatcher'
+    public: true
+
+  alma.category_grid_definition_factory:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Grid\Definition\CategoryGridDefinitionFactory'
+    parent: 'prestashop.core.grid.definition.factory.abstract_grid_definition'
+    public: true
+    arguments:
+      - '@request_stack'
+      - '@prestashop.adapter.shop.context'
+      - '@=service("prestashop.adapter.multistore_feature").isUsed()'
+      - '@twig'
+
+  alma.category_query_builder:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Grid\Query\CategoryQueryBuilder'
+    parent: 'prestashop.core.grid.abstract_query_builder'
+    arguments:
+      - '@=service("prestashop.adapter.legacy.context").getContext().language.id'
+      - '@=service("prestashop.adapter.legacy.context").getContext().shop.id'
+      - '@=service("alma.excluded_categories_repository").getIds()'
+    public: true
+
+  alma.category_data_factory:
+    class: 'PrestaShop\PrestaShop\Core\Grid\Data\Factory\DoctrineGridDataFactory'
+    arguments:
+      - '@alma.category_query_builder'
+      - '@prestashop.core.hook.dispatcher'
+      - '@prestashop.core.grid.query.doctrine_query_parser'
+      - 'category'
+
+  alma.category_grid_data_factory:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Grid\Data\CategoryGridDataFactory'
+    decorates: 'alma.category_data_factory'
+    arguments:
+      - '@alma.category_grid_data_factory.inner'
+
+  alma.migration_service:
+    class: 'PrestaShop\Module\Alma\Application\Service\MigrationService'
+    arguments:
+      - '@alma.fee_plans_provider'
+      - '@alma.fee_plans_service'
+      - '@alma.payment_button_service'
+      - '@alma.excluded_categories_service'
+      - '@alma.configuration_repository'
+      - '@alma.language_repository'
+
+  alma.currency_validator:
+    class: 'PrestaShop\Module\Alma\Application\Validator\CurrencyValidator'
+    arguments:
+      - '@alma.currency_proxy'
+
+  alma.currency_proxy:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Proxy\CurrencyProxy'

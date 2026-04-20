@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file original="almin" source-language="en-US" target-language="en-US" datatype="plaintext">
+    <body>
+      <trans-unit id="f4f70727dc34561dfde1a3c529b6205c">
+        <source>Settings</source>
+        <target>Settings</target>
+        <note>Line: </note>
+      </trans-unit>
+      <trans-unit id="e060d30d1a94fe83df813bb687195609">
+        <source>Excluded Categories</source>
+        <target>Excluded Categories</target>
+        <note>Line: </note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
