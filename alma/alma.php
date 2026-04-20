@@ -25,6 +25,7 @@
 use PrestaShop\Module\Alma\Application\Service\AssetService;
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
+use PrestaShop\Module\Alma\Application\Service\WidgetFrontendService;
 use PrestaShop\Module\Alma\Infrastructure\Factory\HookServiceFactory;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
@@ -177,7 +178,7 @@ class Alma extends PaymentModule implements WidgetInterface
      */
     public function hookDisplayShoppingCartFooter(array $params): string
     {
-        return $this->renderWidget('alma.widget.ShoppingCartFooter', $params);
+        return $this->renderWidget(WidgetFrontendService::WIDGET_HOOK_SHOPPING_CART_FOOTER, $params);
     }
 
     /**
@@ -192,7 +193,7 @@ class Alma extends PaymentModule implements WidgetInterface
             return '';
         }
 
-        return $this->renderWidget('alma.widget.ProductPriceBlock', $params);
+        return $this->renderWidget(WidgetFrontendService::WIDGET_HOOK_PRODUCT_PRICE_BLOCK, $params);
     }
 
     /**

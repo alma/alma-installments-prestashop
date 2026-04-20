@@ -9,6 +9,10 @@ use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 
 class WidgetFrontendService
 {
+    const WIDGET_HOOK_SHOPPING_CART_FOOTER = 'alma.widget.ShoppingCartFooter';
+    const WIDGET_CART = 'alma.widget.cart';
+    const WIDGET_HOOK_PRODUCT_PRICE_BLOCK = 'alma.widget.ProductPriceBlock';
+    const WIDGET_PRODUCT = 'alma.widget.product';
     private \Context $context;
     /**
      * @var ConfigurationRepository
@@ -61,8 +65,8 @@ class WidgetFrontendService
     private function getWidgetVariables(string $hookName): array
     {
         switch ($hookName) {
-            case 'alma.widget.ShoppingCartFooter':
-            case 'alma.widget.cart':
+            case self::WIDGET_HOOK_SHOPPING_CART_FOOTER:
+            case self::WIDGET_CART:
                 /** @var \Cart $cart */
                 $cart = $this->context->cart;
 
@@ -78,8 +82,8 @@ class WidgetFrontendService
                     : '#' . $container;
                 $hideIfNotEligible = (int) !$this->configurationRepository->getCartWidgetDisplayNotEligible();
                 break;
-            case 'alma.widget.ProductPriceBlock':
-            case 'alma.widget.product':
+            case self::WIDGET_HOOK_PRODUCT_PRICE_BLOCK:
+            case self::WIDGET_PRODUCT:
                 $controller = $this->context->controller;
 
                 if (!method_exists($controller, 'getProduct')) {
@@ -157,7 +161,7 @@ class WidgetFrontendService
      */
     private function isWidgetCart(string $hookName): bool
     {
-        return in_array($hookName, ['alma.widget.ShoppingCartFooter', 'alma.widget.cart']);
+        return in_array($hookName, [self::WIDGET_HOOK_SHOPPING_CART_FOOTER, self::WIDGET_CART]);
     }
 
     /**
@@ -177,7 +181,7 @@ class WidgetFrontendService
      */
     private function isWidgetProduct(string $hookName): bool
     {
-        return in_array($hookName, ['alma.widget.ProductPriceBlock', 'alma.widget.product']);
+        return in_array($hookName, [self::WIDGET_HOOK_PRODUCT_PRICE_BLOCK, self::WIDGET_PRODUCT]);
     }
 
     /**
