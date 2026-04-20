@@ -10,7 +10,6 @@ use PrestaShop\Module\Alma\Infrastructure\Proxy\ProductProxy;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ConfigurationRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\ExcludedCategoriesRepository;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
-use PrestaShopBundle\Translation\TranslatorInterface;
 
 class ExcludedCategoriesServiceTest extends TestCase
 {
@@ -33,18 +32,18 @@ class ExcludedCategoriesServiceTest extends TestCase
 
     public function setUp(): void
     {
+        $this->module = $this->createMock(\Alma::class);
         $this->context = $this->createMock(\Context::class);
         $this->excludedCategoriesRepository = $this->createMock(ExcludedCategoriesRepository::class);
         $this->configurationRepository = $this->createMock(ConfigurationRepository::class);
         $this->languageRepository = $this->createMock(LanguageRepository::class);
-        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->productProxy = $this->createMock(ProductProxy::class);
         $this->excludedCategories = new ExcludedCategoriesService(
+            $this->module,
             $this->context,
             $this->excludedCategoriesRepository,
             $this->configurationRepository,
             $this->languageRepository,
-            $this->translator,
             $this->productProxy
         );
     }
@@ -69,8 +68,8 @@ class ExcludedCategoriesServiceTest extends TestCase
             ->method('getActiveLanguages')
             ->willReturn($languages);
 
-        $this->translator->expects($this->once())
-            ->method('trans')
+        $this->module->expects($this->once())
+            ->method('translate')
             ->willReturn('Your cart is not eligible for payments with Alma.');
 
         $this->assertEquals($expected, $this->excludedCategories->defaultFieldsToSave());
@@ -98,8 +97,8 @@ class ExcludedCategoriesServiceTest extends TestCase
             ->method('getActiveLanguages')
             ->willReturn($languages);
 
-        $this->translator->expects($this->any())
-            ->method('trans')
+        $this->module->expects($this->any())
+            ->method('translate')
             ->willReturnOnConsecutiveCalls(
                 'Your cart is not eligible for payments with Alma.',
                 'Paiements avec Alma indisponibles'

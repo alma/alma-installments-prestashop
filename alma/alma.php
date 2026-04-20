@@ -26,6 +26,7 @@ use PrestaShop\Module\Alma\Application\Exception\WidgetException;
 use PrestaShop\Module\Alma\Application\Service\AssetService;
 use PrestaShop\Module\Alma\Application\Service\ModuleInstallerService;
 use PrestaShop\Module\Alma\Application\Service\ModuleService;
+use PrestaShop\Module\Alma\Application\Service\PaymentOptionsService;
 use PrestaShop\Module\Alma\Infrastructure\Factory\HookServiceFactory;
 use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
@@ -93,6 +94,19 @@ class Alma extends PaymentModule implements WidgetInterface
         $this->confirmUninstall = $this->trans('Are you sure you want to deactivate Alma payments from your shop?');
 
         $this->file = __FILE__;
+    }
+
+    /**
+     * Translate the given string.
+     * @param string $id
+     * @param array $parameters
+     * @param string|null $domain
+     * @param string|null $locale
+     * @return string
+     */
+    public function translate(string $id, array $parameters = [], string $domain = null, string $locale = null): string
+    {
+        return $this->trans($id, $parameters, $domain, $locale);
     }
 
     /**
@@ -190,7 +204,7 @@ class Alma extends PaymentModule implements WidgetInterface
      */
     public function renderWidget($hookName, array $configuration): string
     {
-        $widgetFrontendService = HookServiceFactory::createWidgetService($this->context);
+        $widgetFrontendService = HookServiceFactory::createWidgetService($this, $this->context);
         return $widgetFrontendService->renderWidget($hookName);
     }
 
@@ -203,11 +217,44 @@ class Alma extends PaymentModule implements WidgetInterface
      */
     public function getWidgetVariables($hookName, array $configuration): array
     {
-        $widgetFrontendService = HookServiceFactory::createWidgetService($this->context);
+        $widgetFrontendService = HookServiceFactory::createWidgetService($this, $this->context);
         try {
             return $widgetFrontendService->getWidgetVariables($hookName);
         } catch (WidgetException $e) {
             return ['error_widget' => $e->getMessage()];
         }
+    }
+
+    /**
+     * Display payment options in the checkout page
+     *
+     * @param array $params
+     * @return array
+     */
+    public function hookPaymentOptions(array $params): array
+    {
+        /* @var PaymentOptionsService $paymentOptionsService */
+        try {
+            $paymentOptionsService = $this->get('alma.payment_options_service');
+            $paymentOptionsService->setCart($params['cart'] ?? $this->context->cart);
+            return $paymentOptionsService->buildPaymentOptions();
+        } catch (Exception $e) {
+            // TODO : Remove var_dump when eligibility checkout done
+            var_dump($e->getMessage());
+            //TODO : Add log here
+        }
+
+        return [];
+    }
+
+    /**
+     * Display information in the order confirmation page
+     *
+     * @param array $params
+     * @return string
+     */
+    public function hookDisplayPaymentReturn(array $params): string
+    {
+        return '';
     }
 }

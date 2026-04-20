@@ -198,11 +198,11 @@ services:
   alma.excluded_categories_service:
     class: 'PrestaShop\Module\Alma\Application\Service\ExcludedCategoriesService'
     arguments:
+      - '@alma.module'
       - '@alma.context'
       - '@alma.excluded_categories_repository'
       - '@alma.configuration_repository'
       - '@alma.language_repository'
-      - '@translator'
       - '@alma.product_proxy'
 
   alma.in_page_service:
@@ -363,3 +363,11 @@ services:
       - '@alma.excluded_categories_service'
       - '@alma.configuration_repository'
       - '@alma.language_repository'
+
+  alma.currency_validator:
+    class: 'PrestaShop\Module\Alma\Application\Validator\CurrencyValidator'
+    arguments:
+      - '@alma.currency_proxy'
+
+  alma.currency_proxy:
+    class: 'PrestaShop\Module\Alma\Infrastructure\Proxy\CurrencyProxy'

@@ -11,16 +11,16 @@ use PrestaShop\Module\Alma\Infrastructure\Repository\LanguageRepository;
 
 class HookServiceFactory
 {
-    public static function createWidgetService(\Context $context): WidgetFrontendService
+    public static function createWidgetService(\Alma $module, \Context $context): WidgetFrontendService
     {
         $configurationRepository = new ConfigurationRepository();
         $excludedCategoriesRepository = new ExcludedCategoriesRepository($configurationRepository);
         $excludedCategoriesService = new ExcludedCategoriesService(
+            $module,
             $context,
             $excludedCategoriesRepository,
             $configurationRepository,
             new LanguageRepository(),
-            $context->getTranslator(),
             new ProductProxy()
         );
 
