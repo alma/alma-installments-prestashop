@@ -77,6 +77,10 @@ final class DisplayRefundsHookController extends AdminHookController
     public function run($params)
     {
         $order = new \Order($params['id_order']);
+        if ($order->module !== 'alma') {
+            return null;
+        }
+
         try {
             $payment = $this->getPayment($order);
         } catch (PaymentNotFoundException $e) {

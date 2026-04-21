@@ -22,51 +22,33 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Helpers;
-
-use Alma\API\Lib\RequestUtils;
-use Alma\PrestaShop\Exceptions\ValidateException;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ValidateHelper
+/**
+ * @param \Alma $module
+ *
+ * @return bool
+ */
+function upgrade_module_4_12_0($module)
 {
-    const HEADER_SIGNATURE = 'X-Alma-Signature';
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
 
-    /**
-     * @param $object
-     *
-     * @return bool
-     */
-    public function isLoadedObject($object)
-    {
-        return \Validate::isLoadedObject($object);
+    // Create the anti-duplication payment tracking table.
+    // The UNIQUE KEY on (alma_payment_id, status) prevents duplicate order creation
+    // at the SQL level, as a complement to the advisory lock (CartLockService).
+    $almaPaymentRepository = new \Alma\PrestaShop\Repositories\AlmaPaymentRepository();
+    if (!$almaPaymentRepository->createTable()) {
+        return false;
     }
 
-    /**
-     * @param $externalId
-     * @param $apiKey
-     * @param $signature
-     *
-     * @return void
-     *
-     * @throws \Alma\PrestaShop\Exceptions\ValidateException
-     */
-    public function checkSignature($externalId, $apiKey, $signature)
-    {
-        if (!$externalId) {
-            throw new ValidateException('[Alma] External ID is missing');
-        }
-        if (!$apiKey) {
-            throw new ValidateException('[Alma] Api key is missing');
-        }
-        if (!$signature) {
-            throw new ValidateException('[Alma] Signature is missing');
-        }
-        if (!RequestUtils::isHmacValidated($externalId, $apiKey, $signature)) {
-            throw new ValidateException('[Alma] Signature is invalid');
-        }
+    if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '>')) {
+        Tools::clearAllCache();
+        Tools::clearXMLCache();
     }
+
+    return true;
 }
