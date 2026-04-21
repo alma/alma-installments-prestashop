@@ -51,6 +51,24 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
         $this->paymentValidation = $paymentValidationBuilder->getInstance();
     }
 
+    public function init()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            header('Access-Control-Allow-Origin: *');
+            header('Access-Control-Allow-Methods: GET');
+            header('Access-Control-Allow-Headers: Content-Type');
+            http_response_code(204); // No Content
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+            header('HTTP/1.1 405 Method Not Allowed');
+            http_response_code(405);
+            exit;
+        }
+        parent::init();
+    }
+
     private function fail($cart, $msg = null)
     {
         if (!$msg) {
