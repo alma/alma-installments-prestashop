@@ -56,7 +56,7 @@
             var purchaseAmount = settings.amount;
             if (settings.refreshPrice) {
                 if (settings.psVersion == "1.7") {
-                    var $price = $(".cart-total .value");
+                    var $price = $(".cart-total .value").first();
                 }
 
                 purchaseAmount = $price

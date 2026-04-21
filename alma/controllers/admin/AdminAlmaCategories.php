@@ -420,8 +420,7 @@ class AdminAlmaCategoriesController extends ModuleAdminController
     {
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
             return Tools::getDescriptionClean($description);
-        } else {
-            return strip_tags(Tools::stripslashes($description));
         }
+            return strip_tags(Tools::stripslashes($description));
     }
 }

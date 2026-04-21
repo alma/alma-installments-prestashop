@@ -28,6 +28,7 @@ use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Model\PaymentData;
+use Alma\PrestaShop\Repositories\AlmaPaymentRepository;
 use Alma\PrestaShop\Traits\AjaxTrait;
 
 if (!defined('_PS_VERSION_')) {
@@ -54,6 +55,11 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
     protected $settingsHelper;
 
     /**
+     * @var AlmaPaymentRepository
+     */
+    protected $almaPaymentRepository;
+
+    /**
      * @codeCoverageIgnore
      */
     public function __construct()
@@ -67,6 +73,8 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
 
         $paymentDataBuilder = new PaymentDataBuilder();
         $this->paymentData = $paymentDataBuilder->getInstance();
+
+        $this->almaPaymentRepository = new AlmaPaymentRepository();
     }
 
     /**
@@ -156,6 +164,16 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
             }
 
             $payment = $alma->payments->create($data);
+            try {
+                $this->almaPaymentRepository->trackInitialPayment((int) $cart->id, $payment->id, $payment->state);
+            } catch (\Exception $e) {
+                LoggerFactory::instance()->warning(sprintf(
+                    '[Alma] Failed to track initial payment for Cart %s, Payment %s and status %s',
+                    $cart->id,
+                    $payment->id,
+                    $payment->state
+                ));
+            }
         } catch (Exception $e) {
             $msg = sprintf(
                 '[Alma] ERROR when creating payment for Cart %s: %s - Trace %s',

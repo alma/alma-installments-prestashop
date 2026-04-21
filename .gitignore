@@ -6,14 +6,9 @@ alma/phpunit.xml
 dist
 tmp
 **/.DS_Store
-tools/vendor
-tools/composer.lock
 .vscode/
 .idea/
 .dccache
-.phpunit.result.cache
-/alma/.php-cs-fixer.cache
-/alma/.coverage
 .task/
 .php-cs-fixer.cache
 .php_cs.cache
