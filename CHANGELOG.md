@@ -1,5 +1,27 @@
 # Changelog
 
+## v4.12.0 - 2026-04-21
+
+### Changes
+
+### 🚀 New Features
+
+- Add GET LOCK SQL to avoid duplicate refund
+- Add GET LOCK SQL to avoid duplicate order
+- Add payment history status to avoid duplicate order
+- Improve get Header for signature IPN
+- Handle custom route module for In-Page
+- Add icon P24x
+
+### 🐛 Bug Fixes
+
+- Improve our warning log for non alma payment
+- Fix selector for price with widget in cart page
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @Francois-Gomis, @alma-renovate-bot[bot], @gdraynz, @joyet-simon and @remi-zuffinetti
+
 ## v4.11.0 - 2025-09-30
 
 ### Changes
