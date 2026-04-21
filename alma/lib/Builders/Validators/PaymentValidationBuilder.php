@@ -24,6 +24,8 @@
 
 namespace Alma\PrestaShop\Builders\Validators;
 
+use Alma\PrestaShop\Repositories\AlmaPaymentRepository;
+use Alma\PrestaShop\Services\CartLockService;
 use Alma\PrestaShop\Traits\BuilderTrait;
 use Alma\PrestaShop\Validators\PaymentValidation;
 
@@ -46,7 +48,9 @@ class PaymentValidationBuilder
         return new PaymentValidation(
             $this->getContextFactory(),
             $this->getModuleFactory(),
-            $this->getClientPaymentValidator()
+            $this->getClientPaymentValidator(),
+            new CartLockService(),
+            new AlmaPaymentRepository()
         );
     }
 }

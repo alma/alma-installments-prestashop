@@ -76,9 +76,8 @@ if (class_exists('\Context') && PHP_SAPI != 'cli') {
     {
         if (version_compare(_PS_VERSION_, '1.7', '<')) {
             return Tools::jsonEncode($value);
-        } else {
-            return json_encode($value);
         }
+            return json_encode($value);
     }
 
     smartyRegisterFunction($smarty, 'modifier', 'almaJsonEncode', 'smarty_modifier_almaJsonEncode');

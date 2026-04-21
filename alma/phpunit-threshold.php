@@ -44,6 +44,5 @@ if (!$coverageIsOk) {
     echo "Coverage failed! \r\n";
     echo $errorMessage;
     exit(1);
-} else {
-    echo "Coverage success! \r\n";
 }
+    echo "Coverage success! \r\n";
