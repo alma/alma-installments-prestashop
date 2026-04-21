@@ -1,0 +1,83 @@
+# This workflow is triggered when a release pull request is merged.
+# It creates a draft GitHub release with the tag and name matching the version,
+# and the body extracted from the corresponding section of the CHANGELOG.md.
+name: Create Draft Release
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+  create-draft-release:
+    if: (github.event.pull_request.merged == true) && startsWith(github.event.pull_request.head.ref, 'release/')
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install taskfile.dev
+        uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611 # v2
+        with:
+          version: 3.x
+          repo-token: ${{ github.token }}
+
+      - name: Extract version from branch name
+        id: version
+        shell: bash
+        run: |
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          VERSION="${BRANCH#release/}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Extract changelog section
+        id: changelog
+        shell: bash
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          # Extract the block starting at "## $VERSION" up to (not including) the next "## v" header
+          NOTES=$(awk \
+            "/^## ${VERSION} /{found=1; next} found && /^## v/{exit} found{print}" \
+            CHANGELOG.md)
+
+          if [[ -z "$NOTES" ]]; then
+            echo "No changelog section found for version ${VERSION}"
+            exit 1
+          fi
+
+          # Write to a file to preserve multi-line content
+          echo "$NOTES" > release_notes.md
+
+      - name: Create draft release
+        shell: bash
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          gh release create "${VERSION}" \
+            --title "${VERSION}" \
+            --notes-file release_notes.md \
+            --draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Create release zip file
+        shell: bash
+        run: |
+          task dist
+
+      - name: Add zip file to the release assets
+        shell: bash
+        run: |
+          cd dist && gh release upload "${{ steps.version.outputs.version }}" alma.zip
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Publish the release
+        shell: bash
+        run: |
+          gh release edit "${{ steps.version.outputs.version }}" --draft=false
+        env:
+          GH_TOKEN: ${{ github.token }}
