@@ -25,6 +25,7 @@
 use Alma\PrestaShop\Builders\Validators\PaymentValidationBuilder;
 use Alma\PrestaShop\Exceptions\PaymentValidationException;
 use Alma\PrestaShop\Factories\LoggerFactory;
+use Alma\PrestaShop\Repositories\AlmaPaymentRepository;
 use Alma\PrestaShop\Validators\PaymentValidation;
 use Alma\PrestaShop\Validators\PaymentValidationError;
 
@@ -47,6 +48,7 @@ class AlmaValidationModuleFrontController extends ModuleFrontController
     {
         parent::__construct();
         $this->context = Context::getContext();
+        (new AlmaPaymentRepository())->createTableIfNotExist();
         $paymentValidationBuilder = new PaymentValidationBuilder();
         $this->paymentValidation = $paymentValidationBuilder->getInstance();
     }
