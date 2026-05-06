@@ -41,7 +41,7 @@ class ActionCartSaveHookController extends FrontendHookController
 
     public function canRun()
     {
-        $isLive = SettingsHelper::getActiveMode() === ALMA_MODE_LIVE;
+        $isLive = SettingsHelper::getActiveMode() === SettingsHelper::ALMA_MODE_LIVE;
 
         // Front controllers can run if the module is properly configured ...
         return SettingsHelper::isFullyConfigured()

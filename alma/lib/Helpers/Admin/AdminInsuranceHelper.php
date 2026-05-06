@@ -185,7 +185,7 @@ class AdminInsuranceHelper
      */
     public function envUrl()
     {
-        if (SettingsHelper::getActiveMode() === ALMA_MODE_LIVE) {
+        if (SettingsHelper::getActiveMode() === SettingsHelper::ALMA_MODE_LIVE) {
             return ConstantsHelper::DOMAIN_URL_INSURANCE_LIVE;
         }
 
