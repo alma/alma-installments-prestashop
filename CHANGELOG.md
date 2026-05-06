@@ -1,5 +1,15 @@
 # Changelog
 
+## v4.13.0 - 2026-05-05
+
+### 🐛 Bug Fixes
+
+- Fix occasional payment validation failures after manual module updates
+
+#### Contributors
+
+@Francois-Gomis, @alma-renovate-bot[bot], @github-actions[bot] and @remi-zuffinetti
+
 ## v4.12.0 - 2026-04-21
 
 ### Changes

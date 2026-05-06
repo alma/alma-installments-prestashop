@@ -28,6 +28,7 @@ use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Helpers\HttpHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ValidateHelper;
+use Alma\PrestaShop\Repositories\AlmaPaymentRepository;
 use Alma\PrestaShop\Traits\AjaxTrait;
 use Alma\PrestaShop\Validators\PaymentValidation;
 use Alma\PrestaShop\Validators\PaymentValidationError;
@@ -99,6 +100,9 @@ class AlmaIpnModuleFrontController extends ModuleFrontController
 
         try {
             $this->paymentValidation->checkSignature($paymentId, SettingsHelper::getActiveAPIKey(), $signature);
+            // Signature verified — only now do we touch the DB. Anonymous POSTs to this
+            // endpoint are rejected above without ever reaching CREATE TABLE / INSERT.
+            (new AlmaPaymentRepository())->createTableIfNotExist();
             $this->paymentValidation->validatePayment($paymentId);
             $this->ajaxRenderAndExit(json_encode(['success' => true]));
         } catch (PaymentValidationException $e) {

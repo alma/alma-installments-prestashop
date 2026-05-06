@@ -75,6 +75,7 @@ class AlmaPaymentModuleFrontController extends ModuleFrontController
         $this->paymentData = $paymentDataBuilder->getInstance();
 
         $this->almaPaymentRepository = new AlmaPaymentRepository();
+        $this->almaPaymentRepository->createTableIfNotExist();
     }
 
     /**

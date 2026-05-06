@@ -49,6 +49,28 @@ if (!defined('_PS_VERSION_')) {
 class AlmaPaymentRepository
 {
     const STATUS_CAPTURED = 'CAPTURED';
+    const MYSQL_ERR_DUPLICATE_ENTRY = 1062;
+
+    /**
+     * Defensive self-heal called from front controllers: if the upgrade routine never ran
+     * (e.g. files replaced via FTP/git pull without going through PS's Module Manager),
+     * the table is missing and insertCapture would fail silently.
+     *
+     * Relies on the CREATE TABLE IF NOT EXISTS being idempotent rather than checking
+     * existence first: a single statement is robust to weird DB states (ANSI_QUOTES,
+     * SHOW TABLES permission issues, transient connection errors) and matches the cost
+     * of the previous SHOW TABLES probe — both are O(1) data-dictionary lookups.
+     *
+     * @return void
+     */
+    public function createTableIfNotExist()
+    {
+        try {
+            $this->createTable();
+        } catch (\PrestaShopException $e) {
+            LoggerFactory::instance()->warning('[Alma] Error in create table alma_payment: ' . $e->getMessage());
+        }
+    }
 
     /**
      * Creates the ps_alma_payment table.
@@ -99,23 +121,32 @@ class AlmaPaymentRepository
      * Attempts to insert a CAPTURED row for the given payment before validateOrder() is called.
      *
      * Returns true if the INSERT succeeded (this process is the sole owner of the capture).
-     * Returns false if a UNIQUE KEY violation is raised (MySQL 1062), meaning another process
+     * Returns false ONLY when a UNIQUE KEY violation is raised (MySQL 1062): another process
      * already inserted a CAPTURED row for this payment — validateOrder() must NOT be called.
      *
-     * Any other database exception is wrapped in a PaymentValidationException so the caller
-     * can handle it explicitly (e.g. redirect to error page) without leaking DB internals.
+     * Every other failure mode (table missing, deadlock, FK error, server gone away, etc.)
+     * is wrapped in a PaymentValidationException so the caller fails loudly instead of
+     * misinterpreting the failure as a duplicate.
+     *
+     * Two detection paths run in parallel because PS's Db layer behaves differently
+     * depending on the driver and PS_MODE_DEV / PS_DEBUG_SQL:
+     *  - DbMySQLi (debug) throws PrestaShopDatabaseException, DbPDO throws plain
+     *    PrestaShopException — both are handled by the catch block since the latter
+     *    is the parent class.
+     *  - In production with errors silenced, Db::insert() returns false → we inspect
+     *    getNumberError() to tell 1062 from any other failure.
      *
      * @param int    $cartId
      * @param string $almaPaymentId
      *
      * @return bool true if INSERT succeeded, false on duplicate
      *
-     * @throws PaymentValidationException on unexpected DB errors
+     * @throws PaymentValidationException on any other DB error
      */
     public function insertCapture($cartId, $almaPaymentId)
     {
         try {
-            return \Db::getInstance()->insert(
+            $inserted = \Db::getInstance()->insert(
                 'alma_payment',
                 [
                     'id_cart' => (int) $cartId,
@@ -123,7 +154,7 @@ class AlmaPaymentRepository
                     'status' => self::STATUS_CAPTURED,
                 ]
             );
-        } catch (\PrestaShopDatabaseException $e) {
+        } catch (\PrestaShopException $e) {
             if ($this->isDuplicateEntryError($e)) {
                 LoggerFactory::instance()->warning(
                     '[Alma] Duplicate CAPTURED row blocked for payment ' . $almaPaymentId . ' — order already being created by another process'
@@ -133,21 +164,42 @@ class AlmaPaymentRepository
             }
 
             LoggerFactory::instance()->error(
-                '[Alma] Unexpected DB error in insertCapture for payment ' . $almaPaymentId . ': ' . $e->getMessage()
+                '[Alma] Unexpected DB exception in insertCapture for payment ' . $almaPaymentId . ': ' . $e->getMessage()
             );
 
             throw new PaymentValidationException('[Alma] DB error during capture insert for payment ' . $almaPaymentId, (int) $cartId, 0, $e);
         }
+
+        if ($inserted) {
+            return true;
+        }
+
+        $errno = (int) \Db::getInstance()->getNumberError();
+        $errMsg = \Db::getInstance()->getMsgError();
+
+        if (self::MYSQL_ERR_DUPLICATE_ENTRY === $errno) {
+            LoggerFactory::instance()->warning(
+                '[Alma] Duplicate CAPTURED row blocked for payment ' . $almaPaymentId . ' — order already being created by another process'
+            );
+
+            return false;
+        }
+
+        LoggerFactory::instance()->error(
+            '[Alma] DB error in insertCapture for payment ' . $almaPaymentId . ' (errno ' . $errno . '): ' . $errMsg
+        );
+
+        throw new PaymentValidationException('[Alma] DB error during capture insert for payment ' . $almaPaymentId . ' (errno ' . $errno . ')', (int) $cartId);
     }
 
     /**
      * Returns true if the given exception was caused by a MySQL duplicate entry error (1062).
      *
-     * @param \PrestaShopDatabaseException $e
+     * @param \PrestaShopException $e
      *
      * @return bool
      */
-    private function isDuplicateEntryError(\PrestaShopDatabaseException $e)
+    private function isDuplicateEntryError(\PrestaShopException $e)
     {
         return strpos($e->getMessage(), 'Duplicate entry') !== false;
     }
