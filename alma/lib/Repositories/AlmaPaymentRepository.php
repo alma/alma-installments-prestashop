@@ -68,7 +68,9 @@ class AlmaPaymentRepository
         try {
             $this->createTable();
         } catch (\PrestaShopException $e) {
-            LoggerFactory::instance()->warning('[Alma] Error in create table alma_payment: ' . $e->getMessage());
+            LoggerFactory::instance()->warning('[Alma] Error PrestaShopException in create table alma_payment: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            LoggerFactory::instance()->warning('[Alma] Error Exception in create table alma_payment: ' . $e->getMessage());
         }
     }
 
@@ -190,6 +192,25 @@ class AlmaPaymentRepository
         );
 
         throw new PaymentValidationException('[Alma] DB error during capture insert for payment ' . $almaPaymentId . ' (errno ' . $errno . ')', (int) $cartId);
+    }
+
+    /**
+     * Verify if table exists (_DB_PREFIX_alma_payment)
+     *
+     * @return bool
+     */
+    public function isTableExists()
+    {
+        try {
+            $tableExists = \Db::getInstance()->executeS('SHOW TABLES LIKE "' . _DB_PREFIX_ . 'alma_payment"');
+            return is_array($tableExists) && count($tableExists) > 0;
+        } catch (\PrestaShopException $e) {
+            LoggerFactory::instance()->warning('[Alma] DB error PrestaShopException during tableExists: ' . $e->getMessage());
+            return false;
+        } catch (\Exception $e) {
+            LoggerFactory::instance()->warning('[Alma] DB error Exception during tableExists: ' . $e->getMessage());
+            return false;
+        }
     }
 
     /**
