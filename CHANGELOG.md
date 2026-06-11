@@ -1,5 +1,17 @@
 # Changelog
 
+## v4.14.0 - 2026-06-11
+
+### Changes
+
+### 🚀 New Features
+
+- Feature/ecom 4255 avoid error payment if alma payment table does not exist (#65)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @alma-renovate-bot[bot], @github-actions[bot], @remi-zuffinetti, [alma-renovate-bot[bot]](https://github.com/apps/alma-renovate-bot) and [github-actions[bot]](https://github.com/apps/github-actions)
+
 ## v4.13.0 - 2026-05-05
 
 ### 🐛 Bug Fixes

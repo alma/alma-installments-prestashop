@@ -39,6 +39,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
 use Alma\PrestaShop\Proxy\CartProxy;
+use Alma\PrestaShop\Proxy\OrderProxy;
 use Alma\PrestaShop\Proxy\PaymentModuleProxy;
 use Alma\PrestaShop\Repositories\AlmaPaymentRepository;
 use Alma\PrestaShop\Services\AlmaBusinessDataService;
@@ -92,6 +93,10 @@ class PaymentValidation
      */
     private $cartProxy;
     /**
+     * @var \Alma\PrestaShop\Proxy\OrderProxy
+     */
+    private $orderProxy;
+    /**
      * @var CartLockService
      */
     private $cartLockService;
@@ -131,6 +136,7 @@ class PaymentValidation
         $this->orderService = $orderServiceBuilder->getInstance();
         $this->almaBusinessDataService = new AlmaBusinessDataService();
         $this->cartProxy = new CartProxy();
+        $this->orderProxy = new OrderProxy();
         $this->paymentModuleProxy = new PaymentModuleProxy();
         $this->cartLockService = $cartLockService ?: new CartLockService();
         $this->almaPaymentRepository = $almaPaymentRepository ?: new AlmaPaymentRepository();
@@ -294,7 +300,7 @@ class PaymentValidation
                     $this->almaBusinessDataService->updatePlanKey($planKey, $cart->id);
                     $this->almaBusinessDataService->updateAlmaPaymentId($payment->id, $cart->id);
 
-                    if (!$this->almaPaymentRepository->insertCapture((int) $cart->id, $payment->id)) {
+                    if ($this->almaPaymentRepository->isTableExists() && (!$this->almaPaymentRepository->insertCapture((int) $cart->id, $payment->id))) {
                         LoggerFactory::instance()->warning(
                             "[Alma] Duplicate capture blocked by UNIQUE constraint for cart {$cart->id} — skipping validateOrder()"
                         );
@@ -377,22 +383,23 @@ class PaymentValidation
      */
     private function getOrderByCartId($cartId)
     {
-        if (!\Order::getIdByCartId((int) $cartId)) {
+        if (!$this->orderProxy->getIdByCartId((int) $cartId)) {
             throw new PaymentValidationException('[Alma] Order does not exist', $cartId);
         }
 
         if (is_callable(['\Order', 'getByCartId'])) {
             return \Order::getByCartId((int) $cartId);
         }
-            $orderId = (int) \Order::getOrderByCartId((int) $cartId);
 
-            try {
-                return new \Order($orderId);
-            } catch (\PrestaShopDatabaseException $e) {
-                throw new PaymentValidationException('[Alma] Error Prestashop database', $cartId, 0, $e);
-            } catch (\PrestaShopException $e) {
-                throw new PaymentValidationException('[Alma] Error Prestashop', $cartId, 0, $e);
-            }
+        $orderId = $this->orderProxy->getIdByCartId((int) $cartId);
+
+        try {
+            return new \Order($orderId);
+        } catch (\PrestaShopDatabaseException $e) {
+            throw new PaymentValidationException('[Alma] Error Prestashop database', $cartId, 0, $e);
+        } catch (\PrestaShopException $e) {
+            throw new PaymentValidationException('[Alma] Error Prestashop', $cartId, 0, $e);
+        }
     }
 
     /**
