@@ -10,7 +10,7 @@
         "prestashop/autoindex": "^1.0.0"
     },
     "require": {
-        "php": "^5.6 || ~7.0 || ~7.1 || ~7.2 || ~7.3 || ~7.4 || ~8.0 || ~8.1",
+        "php": ">=5.6",
         "alma/alma-php-client": "^2.6.1",
         "ext-json": "*",
         "ext-openssl": "*",
@@ -45,7 +45,7 @@
     "scripts": {
         "php-cs": "php vendor/bin/php-cs-fixer fix --dry-run",
         "php-cs-fixer": "php vendor/bin/php-cs-fixer fix",
-        "php-compatibility": "vendor/bin/phpcs -p . --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.1 --ignore=\\*/vendor/\\*"
+        "php-compatibility": "vendor/bin/phpcs -p . --standard=PHPCompatibility -s --runtime-set testVersion 5.6-8.5 --ignore=\\*/vendor/\\*"
     },
     "extra": {
         "installer-name": "alma"

@@ -25,7 +25,11 @@
 namespace Alma\PrestaShop\Helpers;
 
 use Alma\API\Client;
+use Alma\API\Lib\IntegrationsConfigurationsUtils;
+use Alma\PrestaShop\Builders\Helpers\ApiHelperBuilder;
+use Alma\PrestaShop\Builders\Helpers\ContextHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\SettingsHelperBuilder;
+use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Forms\CartEligibilityAdminFormBuilder;
 use Alma\PrestaShop\Forms\DebugAdminFormBuilder;
 use Alma\PrestaShop\Forms\InpageAdminFormBuilder;
@@ -41,6 +45,7 @@ if (!defined('_PS_VERSION_')) {
 class CmsDataHelper
 {
     const ALMA_CMSDATA_DATE = 'ALMA_CMSDATA_DATE';
+    const ALMA_CMSDATA_CONTROLLER = 'cmsdataexport';
     /**
      * @var ModuleHelper
      */
@@ -65,6 +70,14 @@ class CmsDataHelper
      * @var ShopModel
      */
     protected $shopModel;
+    /**
+     * @var ApiHelper
+     */
+    private $apiHelper;
+    /**
+     * @var ContextHelper
+     */
+    private $contextHelper;
 
     /**
      * @param ModuleHelper $moduleHelper
@@ -80,7 +93,9 @@ class CmsDataHelper
         $almaModuleModel = null,
         $settingsHelper = null,
         $toolsHelper = null,
-        $shopModel = null
+        $shopModel = null,
+        $apiHelper = null,
+        $contextHelper = null
     ) {
         if (!$moduleHelper) {
             $moduleHelper = new ModuleHelper();
@@ -111,6 +126,14 @@ class CmsDataHelper
             $shopModel = new ShopModel();
         }
         $this->shopModel = $shopModel;
+        if (!$apiHelper) {
+            $apiHelper = (new ApiHelperBuilder())->getInstance();
+        }
+        $this->apiHelper = $apiHelper;
+        if (!$contextHelper) {
+            $contextHelper = (new ContextHelperBuilder())->getInstance();
+        }
+        $this->contextHelper = $contextHelper;
     }
 
     /**
@@ -174,5 +197,20 @@ class CmsDataHelper
         }
 
         return $feePlans;
+    }
+
+    /**
+     * @return void
+     */
+    public function sendUrlIfInDateRange()
+    {
+        try {
+            if (IntegrationsConfigurationsUtils::isUrlRefreshRequired($this->settingsHelper->getKey(self::ALMA_CMSDATA_DATE))) {
+                $this->apiHelper->sendUrlForGatherCmsData($this->contextHelper->getModuleLink(self::ALMA_CMSDATA_CONTROLLER, [], true));
+                $this->settingsHelper->updateKey(self::ALMA_CMSDATA_DATE, time());
+            }
+        } catch (\Exception $e) {
+            LoggerFactory::instance()->error('Failed to send URL for CMS data gathering on payment', ['exception' => $e]);
+        }
     }
 }

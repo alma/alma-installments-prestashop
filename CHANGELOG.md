@@ -1,5 +1,17 @@
 # Changelog
 
+## v4.15.0 - 2026-07-02
+
+### 🚀 New Features
+
+- feat: Issue with getDescriptionClean() on PS 9 (#74)
+- feat: Display widget Cart on Prestashop 9.1.3 (#73)
+- feat: send url gather cms data on validation payment (#69)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @Francois-Gomis, @alma-renovate-bot[bot], @gdraynz, @github-actions[bot], @joyet-simon, @remi-zuffinetti, [alma-create-pr-with-team-review[bot]](https://github.com/apps/alma-create-pr-with-team-review), [alma-renovate-bot[bot]](https://github.com/apps/alma-renovate-bot) and [github-actions[bot]](https://github.com/apps/github-actions)
+
 ## v4.14.0 - 2026-06-11
 
 ### Changes

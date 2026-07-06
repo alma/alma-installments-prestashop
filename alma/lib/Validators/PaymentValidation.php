@@ -35,6 +35,7 @@ use Alma\PrestaShop\Factories\ContextFactory;
 use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
 use Alma\PrestaShop\Helpers\ClientHelper;
+use Alma\PrestaShop\Helpers\CmsDataHelper;
 use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\SettingsHelper;
 use Alma\PrestaShop\Helpers\ToolsHelper;
@@ -104,6 +105,10 @@ class PaymentValidation
      * @var AlmaPaymentRepository
      */
     private $almaPaymentRepository;
+    /**
+     * @var CmsDataHelper
+     */
+    private $cmsDataHelper;
 
     /**
      * @param ContextFactory $contextFactory
@@ -111,13 +116,15 @@ class PaymentValidation
      * @param PaymentValidator $clientPaymentValidator
      * @param CartLockService|null $cartLockService
      * @param AlmaPaymentRepository|null $almaPaymentRepository
+     * @param CmsDataHelper|null $cmsDataHelper
      */
     public function __construct(
         $contextFactory,
         $moduleFactory,
         $clientPaymentValidator,
         $cartLockService = null,
-        $almaPaymentRepository = null
+        $almaPaymentRepository = null,
+        $cmsDataHelper = null
     ) {
         $this->context = $contextFactory->getContext();
         $this->module = $moduleFactory->getModule();
@@ -140,6 +147,7 @@ class PaymentValidation
         $this->paymentModuleProxy = new PaymentModuleProxy();
         $this->cartLockService = $cartLockService ?: new CartLockService();
         $this->almaPaymentRepository = $almaPaymentRepository ?: new AlmaPaymentRepository();
+        $this->cmsDataHelper = $cmsDataHelper ?: new CmsDataHelper();
     }
 
     /**
@@ -365,6 +373,8 @@ class PaymentValidation
             $this->module->currentOrder = $this->getOrderByCartId((int) $cart->id)->id;
             $extraRedirectArgs = "&recover_cart={$cart->id}&token_cart={$tokenCart}";
         }
+
+        $this->cmsDataHelper->sendUrlIfInDateRange();
 
         return $this->context->link->getPageLink('order-confirmation', true)
             . '?id_cart=' . (int) $cart->id
