@@ -82,7 +82,7 @@ class PaymentModuleProxy
         $currency_special = null,
         $dont_touch_amount = false,
         $secure_key = false,
-        Shop $shop = null
+        $shop = null
     ) {
         if ($this->cartProxy->orderExists($id_cart)) {
             LoggerFactory::instance()->warning('[Alma] Attempting to create a duplicate order for cart ID ' . $id_cart);

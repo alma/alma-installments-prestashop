@@ -57,6 +57,9 @@
             if (settings.refreshPrice) {
                 if (settings.psVersion == "1.7") {
                     var $price = $(".cart-total .value").first();
+                    if ($price.length === 0) {
+                        $price = $(".cart-summary__total .cart-summary__value").first();
+                    }
                 }
 
                 purchaseAmount = $price

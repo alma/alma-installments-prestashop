@@ -24,6 +24,7 @@
 
 namespace Alma\PrestaShop\Builders\Validators;
 
+use Alma\PrestaShop\Helpers\CmsDataHelper;
 use Alma\PrestaShop\Repositories\AlmaPaymentRepository;
 use Alma\PrestaShop\Services\CartLockService;
 use Alma\PrestaShop\Traits\BuilderTrait;
@@ -50,7 +51,8 @@ class PaymentValidationBuilder
             $this->getModuleFactory(),
             $this->getClientPaymentValidator(),
             new CartLockService(),
-            new AlmaPaymentRepository()
+            new AlmaPaymentRepository(),
+            new CmsDataHelper()
         );
     }
 }
