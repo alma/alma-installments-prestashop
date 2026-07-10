@@ -22,31 +22,53 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Helpers;
-
-use Alma\PrestaShop\Helpers\InsuranceHelper;
-use Alma\PrestaShop\Traits\BuilderTrait;
+use Alma\PrestaShop\Factories\LoggerFactory;
+use Alma\PrestaShop\Helpers\ConstantsHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class InsuranceHelperBuilder
+/**
+ * @param \Alma $module
+ *
+ * @return bool
+ */
+function upgrade_module_4_16_0($module)
 {
-    use BuilderTrait;
+    require_once _PS_MODULE_DIR_ . 'alma/upgrade/autoload_upgrade.php';
 
-    /**
-     * @return InsuranceHelper
-     */
-    public function getInstance()
-    {
-        return new InsuranceHelper(
-            $this->getCartProductRepository(),
-            $this->getProductRepository(),
-            $this->getAlmaInsuranceProductRepository(),
-            $this->getContextFactory(),
-            $this->getToolsHelper(),
-            $this->getSettingsHelper()
-        );
+    // Clear insurance hook names
+    $oldHooks = [
+        'actionAdminOrdersListingFieldsModifier',
+        'actionOrderGridQueryBuilderModifier',
+        'actionOrderGridDefinitionModifier',
+        'actionObjectProductInCartDeleteAfter',
+        'actionAfterDeleteProductInCart',
+        'displayAdminOrderTop',
+        'displayCartExtraProductActions',
+        'displayProductActions',
+        'termsAndConditions',
+        'displayInvoice'
+    ];
+    foreach ($oldHooks as $hookName) {
+        $module->unregisterHook($hookName);
     }
+
+    // Drop insurance table
+    $sql = 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'alma_insurance_product`;';
+
+    try {
+        Db::getInstance()->execute($sql);
+    } catch (PrestaShopException $e) {
+        LoggerFactory::instance()->warning('[Alma] Error during drop table alma_insurance_product: ' . $e->getMessage());
+        return false;
+    }
+
+    if (version_compare(_PS_VERSION_, ConstantsHelper::PRESTASHOP_VERSION_1_7_0_2, '>')) {
+        Tools::clearAllCache();
+        Tools::clearXMLCache();
+    }
+
+    return true;
 }

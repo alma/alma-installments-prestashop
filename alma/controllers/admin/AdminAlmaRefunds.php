@@ -34,6 +34,7 @@ use Alma\PrestaShop\Helpers\PriceHelper;
 use Alma\PrestaShop\Helpers\RefundHelper;
 use Alma\PrestaShop\Services\CartLockService;
 use Alma\PrestaShop\Traits\AjaxTrait;
+use Alma\PrestaShop\Traits\HttpMethodRestrictTrait;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -42,6 +43,7 @@ if (!defined('_PS_VERSION_')) {
 class AdminAlmaRefundsController extends ModuleAdminController
 {
     use AjaxTrait;
+    use HttpMethodRestrictTrait;
 
     /**
      * If set to true, page content and messages will be encoded to JSON before responding to AJAX request.
@@ -69,6 +71,12 @@ class AdminAlmaRefundsController extends ModuleAdminController
         $priceHelperBuilder = new PriceHelperBuilder();
         $this->priceHelper = $priceHelperBuilder->getInstance();
         $this->lockService = new CartLockService();
+    }
+
+    public function init()
+    {
+        $this->allow(['POST']);
+        parent::init();
     }
 
     /**

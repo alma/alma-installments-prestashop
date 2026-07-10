@@ -103,7 +103,7 @@ final class StateHookController extends AdminHookController
     }
 
     /**
-     * Execute some trigger on change state (refund, payment, insurance)
+     * Execute some trigger on change state (refund, payment)
      *
      * @param array $params
      *

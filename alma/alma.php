@@ -30,7 +30,7 @@ require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
 class Alma extends PaymentModule
 {
-    const VERSION = '4.15.0';
+    const VERSION = '4.16.0';
     const PS_ACCOUNTS_VERSION_REQUIRED = '5.3.0';
 
     public $_path;
@@ -71,17 +71,11 @@ class Alma extends PaymentModule
     {
         $this->name = 'alma';
         $this->tab = 'payments_gateways';
-        $this->version = '4.15.0';
+        $this->version = '4.16.0';
         $this->author = 'Alma';
         $this->need_instance = false;
         $this->bootstrap = true;
         $controllers = ['payment', 'validation', 'ipn'];
-
-        if (version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $controllers[] = 'insurance';
-            $controllers[] = 'subscription';
-            $controllers[] = 'cancellation';
-        }
 
         $this->controllers = $controllers;
         $this->is_eu_compatible = 1;
@@ -381,42 +375,6 @@ class Alma extends PaymentModule
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
             return $this->runHookController('displayProductPriceBlock', $params);
         }
-    }
-
-    /**
-     * Hook to modify the order table before Ps 1.7.5
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionAdminOrdersListingFieldsModifier($params)
-    {
-        return $this->runHookController('actionAdminOrdersListingFieldsModifier', $params);
-    }
-
-    /**
-     * Hook to modify the order table after Ps 1.7.5
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionOrderGridQueryBuilderModifier($params)
-    {
-        return $this->runHookController('actionOrderGridQueryBuilderModifier', $params);
-    }
-
-    /**
-     * Hook to modify the order table after Ps 1.7.5
-     *
-     * @param $params
-     *
-     * @return mixed|null
-     */
-    public function hookActionOrderGridDefinitionModifier($params)
-    {
-        return $this->runHookController('actionOrderGridDefinitionModifier', $params);
     }
 
     /**

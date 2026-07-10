@@ -22,46 +22,19 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-namespace Alma\PrestaShop\Builders\Services;
+namespace Alma\PrestaShop\Traits;
 
-use Alma\PrestaShop\Services\InsuranceProductService;
-use Alma\PrestaShop\Traits\BuilderTrait;
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * InsuranceProductServiceBuilder.
- */
-class InsuranceProductServiceBuilder
+trait HttpMethodRestrictTrait
 {
-    use BuilderTrait;
-
-    /**
-     * @return InsuranceProductService
-     */
-    public function getInstance()
+    public function allow(array $methods)
     {
-        return new InsuranceProductService(
-            $this->getProductFactory(),
-            $this->getLinkFactory(),
-            $this->getAlmaInsuranceProductRepository(),
-            $this->getContextFactory(),
-            $this->getAttributeGroupProductService(),
-            $this->getAttributeProductService(),
-            $this->getCombinationProductAttributeService(),
-            $this->getInsuranceService(),
-            $this->getCartService(),
-            $this->getProductRepository(),
-            $this->getProductHelper(),
-            $this->getInsuranceApiService(),
-            $this->getPriceHelper(),
-            $this->getInsuranceHelper(),
-            $this->getToolsFactory(),
-            $this->getImageHelper(),
-            $this->getToolsHelper(),
-            $this->getCartFactory()
-        );
+        $method = isset($_SERVER['REQUEST_METHOD']) ? strtoupper($_SERVER['REQUEST_METHOD']) : 'GET';
+        $methods = array_map('strtoupper', $methods);
+
+        if (!in_array($method, $methods, true)) {
+            header('HTTP/1.1 405 Method Not Allowed');
+            header('Allow: ' . implode(', ', $methods));
+            exit;
+        }
     }
 }

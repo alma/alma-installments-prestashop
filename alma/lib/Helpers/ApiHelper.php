@@ -32,7 +32,6 @@ use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Exceptions\WrongCredentialsException;
 use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Factories\ModuleFactory;
-use Alma\PrestaShop\Helpers\Admin\AdminInsuranceHelper;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -40,10 +39,6 @@ if (!defined('_PS_VERSION_')) {
 
 class ApiHelper
 {
-    /**
-     * @var AdminInsuranceHelper
-     */
-    protected $insuranceHelper;
     /**
      * @var ModuleFactory
      */
@@ -67,20 +62,17 @@ class ApiHelper
      * @param ClientHelper $clientHelper
      * @param ToolsHelper $toolsHelper
      * @param ConfigurationHelper $configurationHelper
-     * @param AdminInsuranceHelper $insuranceHelper
      */
     public function __construct(
         $moduleFactory,
         $clientHelper,
         $toolsHelper,
-        $configurationHelper,
-        $insuranceHelper
+        $configurationHelper
     ) {
         $this->moduleFactory = $moduleFactory;
         $this->clientHelper = $clientHelper;
         $this->toolsHelper = $toolsHelper;
         $this->configurationHelper = $configurationHelper;
-        $this->insuranceHelper = $insuranceHelper;
     }
 
     /**
@@ -117,31 +109,6 @@ class ApiHelper
         }
 
         return $merchant;
-    }
-
-    /**
-     * @param Merchant $merchant
-     * @param string $merchantKey
-     * @param string $configKey
-     *
-     * @return int
-     */
-    public function saveFeatureFlag($merchant, $merchantKey, $configKey, $formSettingName)
-    {
-        $value = 1;
-
-        if ($merchant && property_exists($merchant, $merchantKey)) {
-            $value = $merchant->$merchantKey;
-        }
-
-        $this->configurationHelper->updateValue($configKey, (int) $value);
-
-        // If Inpage not allowed we need to ensure that inpage is deactivated in database
-        if (0 === $value) {
-            $this->configurationHelper->updateValue($formSettingName, $value);
-        }
-
-        return (int) $value;
     }
 
     /**
