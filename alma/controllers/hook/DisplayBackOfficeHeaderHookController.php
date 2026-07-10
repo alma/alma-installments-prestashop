@@ -28,12 +28,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Alma\PrestaShop\Builders\Admin\InsuranceHelperBuilder as AdminInsuranceHelperBuilder;
-use Alma\PrestaShop\Builders\Helpers\InsuranceHelperBuilder;
 use Alma\PrestaShop\Builders\Helpers\ShareOfCheckoutHelperBuilder;
-use Alma\PrestaShop\Helpers\Admin\InsuranceHelper as AdminInsuranceHelper;
-use Alma\PrestaShop\Helpers\ConstantsHelper;
-use Alma\PrestaShop\Helpers\InsuranceHelper;
 use Alma\PrestaShop\Helpers\ShareOfCheckoutHelper;
 use Alma\PrestaShop\Hooks\FrontendHookController;
 
@@ -43,25 +38,11 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
      * @var ShareOfCheckoutHelper
      */
     protected $socHelper;
-    /**
-     * @var InsuranceHelper
-     */
-    protected $insuranceHelper;
-    /**
-     * @var AdminInsuranceHelper
-     */
-    protected $adminInsuranceHelper;
 
     public function __construct($module)
     {
         $shareOfCheckoutHelperBuilder = new ShareOfCheckoutHelperBuilder();
         $this->socHelper = $shareOfCheckoutHelperBuilder->getInstance();
-
-        $insuranceHelperBuilder = new InsuranceHelperBuilder();
-        $this->insuranceHelper = $insuranceHelperBuilder->getInstance();
-
-        $adminInsuranceHelperBuilder = new AdminInsuranceHelperBuilder();
-        $this->adminInsuranceHelper = $adminInsuranceHelperBuilder->getInstance();
 
         parent::__construct($module);
     }
@@ -98,16 +79,5 @@ class DisplayBackOfficeHeaderHookController extends FrontendHookController
         if ($this->socHelper->isSocActivated()) {
             $this->socHelper->sendSocData();
         }
-
-        if ($this->insuranceHelper->isInsuranceActivated()) {
-            $this->context->controller->addJS($this->module->_path . 'views/js/admin/components/modal.js');
-            $this->context->controller->addJS($this->module->_path . 'views/js/admin/alma-insurance-orders.js');
-        }
-
-        $this->context->smarty->assign([
-            'urlScriptInsuranceModal' => $this->adminInsuranceHelper->envUrl() . ConstantsHelper::SCRIPT_MODAL_WIDGET_INSURANCE_PATH,
-        ]);
-
-        return $this->module->display($this->module->file, 'DisplayBackOfficeHeader.tpl');
     }
 }

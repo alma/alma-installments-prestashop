@@ -1,5 +1,16 @@
 # Changelog
 
+## v4.16.0 - 2026-07-10
+
+### 🚀 New Features
+
+- feat: Remove insurance (#78)
+- feat: Restrict an HTTP method for refund in order (#84)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @Francois-Gomis, @alma-renovate-bot[bot], @gdraynz, @github-actions[bot], @joyet-simon, @remi-zuffinetti, [alma-create-pr-with-team-review[bot]](https://github.com/apps/alma-create-pr-with-team-review), [alma-renovate-bot[bot]](https://github.com/apps/alma-renovate-bot) and [github-actions[bot]](https://github.com/apps/github-actions)
+
 ## v4.15.0 - 2026-07-02
 
 ### 🚀 New Features
