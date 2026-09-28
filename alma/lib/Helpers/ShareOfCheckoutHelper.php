@@ -116,7 +116,7 @@ class ShareOfCheckoutHelper
 
             LoggerFactory::instance()->error(
                 sprintf(
-                    'An error occured when sending SOC Data - [message] %',
+                    'An error occured when sending SOC Data - [message] %s',
                     $e->getMessage()
                 )
             );
