@@ -28,6 +28,15 @@ if (!defined('_PS_VERSION_')) {
 // Autoload here for the module definition
 require_once _PS_MODULE_DIR_ . 'alma/vendor/autoload.php';
 
+// Mode constants are compared in hook controllers before SettingsHelper has
+// ever been loaded, so they must exist from bootstrap on (#802).
+if (!defined('ALMA_MODE_TEST')) {
+    define('ALMA_MODE_TEST', 'test');
+}
+if (!defined('ALMA_MODE_LIVE')) {
+    define('ALMA_MODE_LIVE', 'live');
+}
+
 class Alma extends PaymentModule
 {
     const VERSION = '4.16.0';
