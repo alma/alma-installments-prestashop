@@ -2,7 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [ "github>alma/renovate:defaults.json5" ],
   "reviewers": [ "team:squad-e-commerce-integrations" ],
-  "baseBranches": [ "develop" ],
   "packageRules": [
     {
       "matchManagers": [ "composer" ],
