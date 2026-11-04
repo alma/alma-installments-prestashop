@@ -67,7 +67,7 @@ class DisplayAdminAfterHeaderHookController extends FrontendHookController
     {
         if (SettingsHelper::isShareOfCheckoutNoAnswered() || !SettingsHelper::isShareOfCheckoutSetting()) {
             $this->context->smarty->assign([
-                'token' => \Tools::getAdminTokenLite('AdminAlmaShareOfCheckout'),
+                'consentUrl' => $this->context->link->getAdminLink('AdminAlmaShareOfCheckout'),
             ]);
 
             return $this->module->display($this->module->file, 'notificationShareOfCheckout.tpl');
