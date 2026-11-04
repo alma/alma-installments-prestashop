@@ -27,21 +27,18 @@ window.addEventListener("load", function() {
             event.preventDefault();
             $.ajax({
                 type: 'POST',
-                url: 'ajax-tab.php',
+                url: $(this).attr('data-url'),
                 dataType: 'json',
                 data: {
                     ajax: true,
-                    controller: 'AdminAlmaShareOfCheckout',
                     action: 'ConsentShareOfCheckout',
-                    token: $(this).attr('data-token'),
                     consent: $(this).attr('data-consent')
                 },
             })
-            .success(function() {
+            .done(function() {
                 $('.alma.share-of-checkout').hide();
             })
-
-            .error(function(e) {
+            .fail(function(e) {
                 if (e.status != 200) {
                     $('.alma.share-of-checkout').after('<div class="alert alert-danger">' + e.statusText + '</div>');
                 }

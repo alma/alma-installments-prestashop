@@ -27,7 +27,6 @@ namespace Alma\PrestaShop\Helpers;
 use Alma\API\Client;
 use Alma\API\RequestError;
 use Alma\PrestaShop\Builders\Helpers\PriceHelperBuilder;
-use Alma\PrestaShop\Exceptions\ClientException;
 use Alma\PrestaShop\Exceptions\ShareOfCheckoutException;
 use Alma\PrestaShop\Factories\LoggerFactory;
 use Alma\PrestaShop\Forms\ApiAdminFormBuilder;
@@ -90,16 +89,14 @@ class ShareOfCheckoutHelper
 
     /**
      * @return void
-     *
-     * @throws ClientException
      */
     public function sendSocData()
     {
-        $this->almaClient = $this->almaClientHelper->getAlmaClient();
-
         $lastSharingDate = \Configuration::get('ALMA_SOC_CRON_TASK');
 
         try {
+            $this->almaClient = $this->almaClientHelper->getAlmaClient();
+
             $date = new \DateTime();
             $timestamp = $date->getTimestamp();
 
@@ -116,7 +113,7 @@ class ShareOfCheckoutHelper
 
             LoggerFactory::instance()->error(
                 sprintf(
-                    'An error occured when sending SOC Data - [message] %',
+                    'An error occured when sending SOC Data - [message] %s',
                     $e->getMessage()
                 )
             );

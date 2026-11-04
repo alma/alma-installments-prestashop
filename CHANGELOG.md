@@ -1,5 +1,29 @@
 # Changelog
 
+## v4.17.0 - 2026-11-04
+
+### Changes
+
+- Backport to main (#157)
+
+### 🚀 New Features
+
+- docs(readme): warn about unsupported PHP versions [ECOM-4798] (#156)
+- Fix the share of checkout consent banner on PrestaShop 8 and 9 (#147)
+- chore: add version manifests for Prestashop 1.5.3 to the latest (#142)
+- security: bind published container ports to 127.0.0.1 (#128)
+- devx(crowdin): add crowdin proofread step after translations pr  (#117)
+- feat: add ps 9.1.5 (#116)
+
+### 🐛 Bug Fixes
+
+- Add missing compuite-class toleration (#145)
+- Fix dead registration link in install instructions (#134)
+
+#### Contributors
+
+@Benjamin-Freoua-Alma, @alma-renovate-bot[bot], @gdraynz, @hyahiaoui, @jimmycarricart-ext-collab, @juliandufoulon, @mgu, @oscar-alma, @paullouisb, @remi-zuffinetti, @remic-alma, @soukaina-alma, @webaaz, [alma-renovate-bot[bot]](https://github.com/apps/alma-renovate-bot) and [github-actions[bot]](https://github.com/apps/github-actions)
+
 ## v4.16.0 - 2026-07-10
 
 ### 🚀 New Features
