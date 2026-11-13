@@ -8,10 +8,3 @@ repos:
         args: ["--maxkb=1024"]
       - id: detect-private-key
       - id: check-merge-conflict
-
-  - repo: https://github.com/alma/pre-commit-hooks
-    rev: 1.1.2
-    hooks:
-      - id: check-branch-name
-        args:
-          - "-r^((chore|ci|devx|renovate|docs|feature|fix|release|hotfix|hotfix-backport|infra|other|perf|refactor|security|test)\/.+|(snyk)-.+|main|develop|HEAD)$$"
