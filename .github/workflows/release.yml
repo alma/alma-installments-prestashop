@@ -1,6 +1,7 @@
 # This workflow is triggered when a release pull request is merged.
 # It creates a draft GitHub release with the tag and name matching the version,
-# and the body extracted from the corresponding section of the CHANGELOG.md.
+# and the body extracted from the corresponding section of the CHANGELOG.md,
+# publishes it with the module zip, then announces it on Slack.
 name: Create Draft Release
 
 on:
@@ -41,7 +42,7 @@ jobs:
           # Extract the block starting at "## $VERSION" up to (not including) the next "## v" header
           NOTES=$(awk \
             "/^## ${VERSION} /{found=1; next} found && /^## v/{exit} found{print}" \
-            CHANGELOG.md)
+            CHANGELOG.md | sed -E 's/ \(#[0-9]+\)//g')
 
           if [[ -z "$NOTES" ]]; then
             echo "No changelog section found for version ${VERSION}"
@@ -50,6 +51,11 @@ jobs:
 
           # Write to a file to preserve multi-line content
           echo "$NOTES" > release_notes.md
+          {
+            echo "body<<EOF"
+            echo "$NOTES"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Create draft release
         shell: bash
@@ -81,3 +87,25 @@ jobs:
           gh release edit "${{ steps.version.outputs.version }}" --draft=false
         env:
           GH_TOKEN: ${{ github.token }}
+
+      - name: Format release notes for Slack
+        uses: LoveToKnow/slackify-markdown-action@698a1d4d0ff1794152a93c03ee8ca5e03a310d4e # v1.1.1
+        id: slack-markdown-release-notes
+        with:
+          text: |
+            :tada: New publication of PrestaShop Alma module, **[${{ steps.version.outputs.version }}](https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.version }})**:
+
+            ${{ steps.changelog.outputs.body }}
+
+            :warning: This release will be available on PrestaShop marketplace in a few hours
+
+      - name: Send changelog to Slack
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_RELEASE_CHANGELOG_BOT_TOKEN }}
+          payload: |
+            channel: CR9C57YM6
+            username: "${{ github.event.sender.login }}"
+            icon_url: "${{ github.event.sender.avatar_url }}"
+            text: ${{ toJson(steps.slack-markdown-release-notes.outputs.text) }}
