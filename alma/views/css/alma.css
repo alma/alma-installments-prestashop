@@ -126,6 +126,28 @@ p.payment_module a.disable-arrow-icon:after {
     width: 150px;
 }
 
+body#checkout .payment-options .payment-option:has(input[data-module-name="alma"]) {
+    display: flex;
+    align-items: center;
+}
+
+/* The theme renders the text before the logo: put the plan badge first so badges stay aligned whatever the text length. */
+body#checkout .payment-options .payment-option:has(input[data-module-name="alma"]) > label {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+}
+
+/* Same box for every logo, so the texts line up even after the narrower pay now logo. */
+body#checkout .payment-options .payment-option:has(input[data-module-name="alma"]) > label img {
+    width: 75px;
+    height: 26px;
+    object-fit: contain;
+    object-position: left center;
+}
+
 .payment-options .alma-fee-plan--description,
 .order-confirmation .alma-fee-plan--description {
     display: flex;
