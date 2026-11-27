@@ -2,11 +2,9 @@
 
 ## v4.18.0 - 2026-11-27
 
-### Changes
-
 ### 🚀 New Features
 
-- feat(checkout): apply the new Alma brand to the module logos (ECOM-4590) (#172)
+- New Alma brand: the module now displays the new Alma logos at checkout and in the module settings (#172)
 
 #### Contributors
 
