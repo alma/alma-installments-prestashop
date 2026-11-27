@@ -1,6 +1,7 @@
 # This workflow is triggered when a release pull request is merged.
 # It creates a draft GitHub release with the tag and name matching the version,
 # and the body extracted from the corresponding section of the CHANGELOG.md.
+# The draft is published by hand, once its zip is tested.
 name: Create Draft Release
 
 on:
@@ -57,9 +58,11 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.version }}"
 
+          # The tag is only created at publish time: pin it to the commit the zip is built from
           gh release create "${VERSION}" \
             --title "${VERSION}" \
             --notes-file release_notes.md \
+            --target "${{ github.event.pull_request.merge_commit_sha }}" \
             --draft
         env:
           GH_TOKEN: ${{ github.token }}
@@ -73,12 +76,5 @@ jobs:
         shell: bash
         run: |
           cd dist && gh release upload "${{ steps.version.outputs.version }}" alma.zip
-        env:
-          GH_TOKEN: ${{ github.token }}
-
-      - name: Publish the release
-        shell: bash
-        run: |
-          gh release edit "${{ steps.version.outputs.version }}" --draft=false
         env:
           GH_TOKEN: ${{ github.token }}
